@@ -1,0 +1,65 @@
+name: Daily Portfolio Data Collection
+
+on:
+  schedule:
+    # Runs at 23:30 UTC (08:30 KST next day) — after US market close
+    - cron: "30 23 * * 1-5"
+  workflow_dispatch:   # allow manual trigger
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write Google Sheets credentials
+        run: |
+          echo '${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}' > credentials.json
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+
+      - name: Collect daily prices & snapshot
+        run: |
+          python - << 'PYEOF'
+          import json, os, sys
+          from pathlib import Path
+          from dotenv import load_dotenv
+
+          load_dotenv()
+          sys.path.insert(0, ".")
+
+          from src.data_fetcher import build_portfolio_snapshot, get_historical_prices
+
+          # ── Snapshot (latest prices) ──────────────────────────────────────
+          snap = build_portfolio_snapshot(use_sheets=True)
+          out  = Path("data/snapshots")
+          out.mkdir(parents=True, exist_ok=True)
+          from datetime import date
+          snap.to_csv(out / f"snapshot_{date.today()}.csv", index=False)
+          print(f"Snapshot saved: {len(snap)} positions")
+
+          # ── Historical prices (2-year window) ────────────────────────────
+          tickers = snap["ticker"].tolist()
+          prices  = get_historical_prices(tickers, period="2y")
+          prices.to_csv("data/prices.csv")
+          print(f"Prices saved: {len(prices.columns)} tickers, {len(prices)} days")
+          PYEOF
+
+      - name: Commit updated data files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "chore: daily price update $(date -u '+%Y-%m-%d')"
+          git push

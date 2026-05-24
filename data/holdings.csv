@@ -1,0 +1,17 @@
+ticker,name,shares,avg_cost,currency,category,sub_category,market
+005930.KS,삼성전자,5,55000,KRW,core,한국반도체,KRX
+042700.KS,한미반도체,2,270000,KRW,satellite,한국반도체,KRX
+SCHD,Schwab US Dividend ETF,40,26.50,USD,core,배당ETF,NYSE
+GOOGL,Alphabet A,3,215.00,USD,core,AI빅테크,NASDAQ
+NVDA,NVIDIA,5,105.00,USD,core,AI빅테크,NASDAQ
+AMZN,Amazon,4,185.00,USD,core,AI빅테크,NASDAQ
+GLD,SPDR Gold Shares,2,195.00,USD,core,안전자산,NYSE
+MU,Micron Technology,1,105.00,USD,satellite,반도체,NASDAQ
+META,Meta Platforms,1,580.00,USD,satellite,AI빅테크,NASDAQ
+DELL,Dell Technologies,2,130.00,USD,satellite,AI인프라,NYSE
+RTX,RTX Corporation,3,130.00,USD,satellite,방산,NYSE
+BRK-B,Berkshire Hathaway B,1,470.00,USD,core,가치주,NYSE
+APP,AppLovin,1,380.00,USD,satellite,AI광고,NASDAQ
+VYM,Vanguard High Dividend ETF,2,135.00,USD,core,배당ETF,NYSE
+XLV,Health Care Select SPDR,2,155.00,USD,core,헬스케어,NYSE
+AII.TO,Almonty Industries,20,3.50,USD,satellite,전략광물,TSX
